@@ -1,21 +1,45 @@
 import json
-from classes import Candidate
 
 
-def candidates_preformat():
-	"""Формирование списка кандидатов из файла с помещением их в форматированный список"""
+def all_candidates_loading():
+	"""Формирование списка кандидатов из файла"""
 
-	candidates_list = []
+	with open("candidates.json", "r", encoding="utf-8") as candidates:
+		return json.load(candidates)
 
-	with open("candidates.json", "r", encoding="utf-8") as file:
-		candidates = json.load(file)
+
+def candidates_format(candidates):
+	"""Форматирование списка кандидатов для вывода на странице сайте"""
+	candidates_list = "<pre>"
 
 	for candidate in candidates:
-		n = candidate.get("name")
-		p = candidate.get("position")
-		s = candidate.get("skills")
+		cand_name = candidate["name"]
+		cand_position = candidate["position"]
+		cand_skills = candidate["skills"]
 
-		new_format = Candidate(n, p, s)
-		candidates_list.append(new_format)
+		candidates_list += (
+			f"Имя кандидата: {cand_name}<br/>"
+			f"Позиция кандидата: {cand_position}<br/>"
+			f"Навыки: {cand_skills}<br/>"
+		)
+		candidates_list += "<br/><pre>"
 
 	return candidates_list
+
+
+def candidate_by_id(candidates, cand_id):
+	for candidate in candidates:
+		if candidate["id"] == cand_id:
+			return candidate
+
+
+def candidate_by_skill(candidates, cand_skill):
+	skill_list = []
+
+	for candidate in candidates:
+		candidates_skills = candidate["skills"].lower().split(", ")
+
+		if cand_skill.lower() in candidates_skills:
+			skill_list.append(candidate)
+
+	return skill_list
